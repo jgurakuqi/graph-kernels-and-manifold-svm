@@ -28,17 +28,15 @@ class cross_validation_analysis(object):
         distance_matrices,
         labels,
         cv_method,
-        dataset_name,
     ):
         self.manifold_technique = manifold_technique
         self.estimator = estimator
         self.distance_matrices = distance_matrices
         self.labels = labels
         self.cv_method = cv_method
-        self.dataset_name = dataset_name
 
     def __call__(self, act_params):
-        return [
+        return (
             round(
                 cross_val_score(
                     estimator=self.estimator,
@@ -50,12 +48,10 @@ class cross_validation_analysis(object):
                     n_jobs=-1,
                 ).mean(),
                 3,
-            ),
-            self.dataset_name,
-            act_params[0],
-            act_params[1],
-            self.manifold_technique.__name__,
-        ]
+            ),  # 0
+            act_params[0],  # 1
+            act_params[1],  # 2
+        )
 
 
 class shortest_path_kernel:
