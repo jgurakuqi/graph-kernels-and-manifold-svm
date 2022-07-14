@@ -1,10 +1,8 @@
 from sklearn.model_selection import cross_val_score
-from sklearn import manifold, svm
 from multiprocessing import Pool
 
 
 from numpy import (
-    mean,
     fill_diagonal,
     reshape,
     float,
@@ -52,11 +50,11 @@ class cross_validation_analysis(object):
                     n_jobs=-1,
                 ).mean(),
                 3,
-            ),  # Mean -0
-            self.dataset_name,  # Dataset Name -1
-            act_params[0],  # Neighbours -2
-            act_params[1],  # Components -3
-            self.manifold_technique.__name__,  # Manifold method name -4
+            ),
+            self.dataset_name,
+            act_params[0],
+            act_params[1],
+            self.manifold_technique.__name__,
         ]
 
 
