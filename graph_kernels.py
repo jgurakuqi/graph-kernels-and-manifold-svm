@@ -1,5 +1,13 @@
 from sklearn.model_selection import cross_val_score
 from multiprocessing import Pool
+from platform import processor
+
+
+if "x86" in processor():
+    from sklearnex import patch_sklearn
+
+    patch_sklearn()
+    from sklearn.model_selection import cross_val_score
 
 
 from numpy import (
@@ -13,8 +21,6 @@ from numpy import (
     max,
     dot,
     transpose,
-    concatenate,
-    zeros,
 )
 
 from numpy.linalg import norm
@@ -48,14 +54,23 @@ class cross_validation_analysis(object):
                     n_jobs=-1,
                 ).mean(),
                 3,
-            ),  # 0
-            act_params[0],  # 1
-            act_params[1],  # 2
+            ),
+            act_params[0],
+            act_params[1],
         )
 
 
 class shortest_path_kernel:
     def initialize_paths(self, graph):
+        """Initialize the dist matrix which will be populated by the
+        floyd warshall algorithm.
+
+        Args:
+            graph (_type_): matrix
+
+        Returns:
+            _type_: matrix
+        """
         dist = graph
         dist[dist == 0] = float("inf")  # Lowest float value
         fill_diagonal(dist, 0)
@@ -71,16 +86,13 @@ class shortest_path_kernel:
                     dist[i, j] = dist[j, i] = min(dist[i, j], dist[i, k] + dist[k, j])
         return dist
 
-    def compute_shortest_paths(self, graphs):
-        return [self.compute_floyd_warshall(adj_matrix) for adj_matrix in graphs]
-
-    def compute_shortest_paths_multi_process(self, graphs, process_pool_size=None):
+    def compute_shortest_paths_multi_process(self, graphs):
         results = []
-        with Pool(process_pool_size) as executor:
+        with Pool() as executor:
             results = executor.map(func=self.compute_floyd_warshall, iterable=graphs)
         return results
 
-    def compute_similarity(self, first_path, second_path, delta):
+    def compute_delta_similarity(self, first_path, second_path, delta):
         vect1, vect2 = empty([delta + 1, 1]), empty([delta + 1, 1])
         for i in range(delta + 1):
             vect1[i] = sum(first_path == i)
@@ -90,23 +102,9 @@ class shortest_path_kernel:
             vect2 / norm(vect2),
         )[0]
 
-    # similarity between paths weights
-    def k_path_weigth(self, first_shortest_path, second_shortest_path):
-        v1 = first_shortest_path.shape[0]
-        v2 = second_shortest_path.shape[0]
-        max_size = maximum(v1, v2) + 1
-        75462
-        WS1_rows = concatenate(
-            [sum(first_shortest_path, axis=1), zeros(max_size - v1)]
-        )  # pad with zeros
-        WS2_rows = concatenate(
-            [sum(second_shortest_path, axis=1), zeros(max_size - v2)]
-        )  # pad with zeros
-        return dot(WS1_rows, transpose(WS2_rows)) / (norm(WS1_rows) * norm(WS2_rows))
-
     def compute_similarities_task(self, matrix_id):
         return [
-            self.compute_similarity(
+            self.compute_delta_similarity(
                 self.all_matrices[matrix_id],
                 self.all_matrices[i],
                 int(
@@ -118,15 +116,14 @@ class shortest_path_kernel:
             for i in range(len(self.all_matrices))
         ]
 
-    def compute_similarities_multi_process(self, adj_matrices, process_pool_size=None):
+    def compute_similarities_multi_process(self, adj_matrices):
         num_of_matrices = len(adj_matrices)
         all_matrices_ids = range(len(adj_matrices))
         self.all_matrices = adj_matrices
         result = []
-        with Pool(process_pool_size) as executor:
+        with Pool() as executor:
             result = executor.map(
                 func=self.compute_similarities_task,
                 iterable=all_matrices_ids,
             )
-        result = reshape(result, (num_of_matrices, num_of_matrices))
-        return result
+        return reshape(result, (num_of_matrices, num_of_matrices))
