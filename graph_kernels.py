@@ -62,15 +62,6 @@ class cross_validation_analysis(object):
 
 class shortest_path_kernel:
     def initialize_paths(self, graph):
-        """Initialize the dist matrix which will be populated by the
-        floyd warshall algorithm.
-
-        Args:
-            graph (_type_): matrix
-
-        Returns:
-            _type_: matrix
-        """
         dist = graph
         dist[dist == 0] = float("inf")  # Lowest float value
         fill_diagonal(dist, 0)
