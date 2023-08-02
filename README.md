@@ -41,6 +41,8 @@ pip install imageio
 pip install scikit-learn
 ```
 
+Also download the required dataset as specified in the [Requirements](#Requirements).
+
 OPTIONALY Intel Scikit to largely improve performance on x86-compatible CPU or Intel GPU:
 ```bash
 pip install scikit-learn-intelex 
@@ -48,7 +50,7 @@ pip install scikit-learn-intelex
 
 ## Usage
 
-In order to run the Jupyter Notebook a compatible IDE is required. Also download the required dataset as specified in the [Requirements](#Requirements).
+In order to run the Jupyter Notebook a compatible IDE is required. 
 
 # Contributing
 
