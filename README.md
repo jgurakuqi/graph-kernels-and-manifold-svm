@@ -52,7 +52,7 @@ pip install scikit-learn-intelex
 
 In order to run the Jupyter Notebook a compatible IDE is required. 
 
-# Contributing
+## Contributing
 
 In this implementation I chose to implement the Shortest Path Kernel and use the scikit provided manifold techniques: SpectralEmbedding, LocallyLinearEmbedding.
 The provided project could be use to implement further kernels and manifold techniques, to compare their performance. Also, different datasets might be used,
@@ -62,7 +62,7 @@ allowing to gain a better view about the behaviour of these techniques.
 git clone https://github.com/jgurakuqi/graph-kernels-and-manifold-svm
 ```
 
-# License
+## License
 
 MIT License
 
